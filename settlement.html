@@ -1,0 +1,1064 @@
+<title>모임 정산</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+:root {
+  --ground:     #0E1118;
+  --surface:    #161B27;
+  --surface-2:  #1D2337;
+  --border:     #27304A;
+  --text:       #CDD5E0;
+  --text-dim:   #5E6E8A;
+  --text-label: #8A97B0;
+  --green:      #3DB87A;
+  --green-soft: rgba(61,184,122,0.10);
+  --red:        #D94F4F;
+  --red-soft:   rgba(217,79,79,0.10);
+  --blue:       #7B9EE8;
+  --blue-soft:  rgba(123,158,232,0.10);
+  --mono: 'SF Mono','Cascadia Code','Fira Code',Consolas,'Courier New',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: var(--ground); }
+
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ── HEADER ─── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.header-title span { color: var(--green); }
+
+.header-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.header-total {
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.total-num {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.total-per {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.btn-reset {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.06em;
+  min-height: 28px;
+  flex-shrink: 0;
+}
+.btn-reset:active { color: var(--red); border-color: var(--red); }
+
+/* ── SECTION DIVIDER ─── */
+.sec-divider {
+  height: 6px;
+  background: var(--border);
+  opacity: 0.4;
+}
+
+/* ── SECTION HEADER ─── */
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 10px;
+  gap: 8px;
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.sec-count {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 8px;
+}
+
+/* ── EMPTY ─── */
+.empty {
+  padding: 28px 24px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  line-height: 2.2;
+}
+
+/* ── INPUT ROW ─── */
+.input-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.field {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  min-height: 44px;
+}
+.field:focus { border-color: var(--blue); }
+.field.mono { font-family: var(--mono); }
+
+.fselect {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  padding: 10px 30px 10px 12px;
+  border-radius: 3px;
+  outline: none;
+  min-height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235E6E8A'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+}
+.fselect:focus { border-color: var(--blue); }
+
+.btn-plus {
+  background: var(--blue);
+  color: #0E1118;
+  border: none;
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  padding: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  width: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.btn-plus:active { opacity: 0.75; }
+
+/* ── CHIPS ─── */
+.chips-wrap {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 7px 8px 7px 8px;
+  min-height: 38px;
+}
+
+.chip-av {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--blue-soft);
+  border: 1px solid rgba(123,158,232,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--blue);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.chip-name { font-size: 13px; color: var(--text); }
+
+.chip-x {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  min-height: 22px;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 2px;
+}
+.chip-x:active { color: var(--red); }
+
+/* ── EXPENSE FORM ─── */
+.exp-form {
+  background: var(--surface);
+  border-top: 2px solid var(--blue);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  display: none;
+}
+.exp-form.open { display: block; }
+
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  width: 44px;
+  flex-shrink: 0;
+  padding-top: 12px;
+}
+
+.check-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+  padding-top: 4px;
+}
+
+.cchip {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface-2);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-label);
+  font-family: var(--mono);
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.1s;
+  user-select: none;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+.cchip.on { background: var(--blue-soft); border-color: rgba(123,158,232,0.4); color: var(--blue); }
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-save {
+  flex: 1;
+  background: var(--green);
+  color: #0E1118;
+  border: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.12s;
+}
+.btn-save:active { opacity: 0.8; }
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 12px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.12s;
+}
+.btn-cancel:active { opacity: 0.7; }
+
+/* ── ADD EXPENSE BUTTON ─── */
+.btn-add-exp {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  border: 1px solid rgba(123,158,232,0.3);
+  padding: 5px 13px;
+  border-radius: 3px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.12s;
+  min-height: 30px;
+  letter-spacing: 0.04em;
+}
+.btn-add-exp:active { opacity: 0.7; }
+
+/* ── EXPENSE CARDS ─── */
+.exp-list {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.exp-card-top {
+  display: flex;
+  align-items: center;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+
+.exp-desc { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
+
+.exp-amt {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.btn-del {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -4px -6px -4px 4px;
+  border-radius: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-del:active { color: var(--red); background: var(--red-soft); }
+
+.exp-card-bot {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lbl-tiny {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.tag-payer {
+  font-size: 11px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  border: 1px solid rgba(123,158,232,0.25);
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: var(--mono);
+}
+
+.dot { color: var(--border); }
+
+.tag-members { font-size: 11px; color: var(--text-label); font-family: var(--mono); }
+
+/* ── SETTLEMENT ─── */
+#settleSection { padding-bottom: 40px; }
+
+.settle-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.sum-cell {
+  background: var(--surface);
+  padding: 13px 8px;
+  text-align: center;
+}
+
+.sum-val {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.1;
+}
+.sum-val.plain { color: var(--text); }
+
+.sum-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* balance table */
+.balance-box {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 16px 14px;
+}
+
+.bal-head {
+  display: flex;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.bal-head span {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.bal-head .bh-name { flex: 1; }
+.bal-head .bh-paid { width: 80px; text-align: right; }
+.bal-head .bh-net  { width: 86px; text-align: right; }
+
+.bal-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(39,48,74,0.5);
+}
+.bal-row:last-child { border-bottom: none; }
+
+.bal-name { flex: 1; font-size: 13px; color: var(--text); }
+
+.bal-paid {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  width: 80px;
+  text-align: right;
+}
+
+.bal-net {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  width: 86px;
+  text-align: right;
+}
+.bal-net.pos { color: var(--green); }
+.bal-net.neg { color: var(--red); }
+.bal-net.zero { color: var(--text-dim); }
+
+/* transactions */
+.tx-block { padding: 0 16px; }
+
+.tx-hdr {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+
+.tx-hdr-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.btn-share {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  border: 1px solid rgba(123,158,232,0.3);
+  padding: 4px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  min-height: 28px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.12s;
+}
+.btn-share:active { opacity: 0.7; }
+
+.tx-item {
+  display: flex;
+  align-items: center;
+  padding: 11px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 7px;
+  gap: 8px;
+}
+
+.tx-from {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--red-soft);
+  border: 1px solid rgba(217,79,79,0.25);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+.tx-arrow { font-family: var(--mono); font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
+
+.tx-to {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--green-soft);
+  border: 1px solid rgba(61,184,122,0.25);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+.tx-amt {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.settled-ok {
+  text-align: center;
+  padding: 32px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 0.1em;
+  line-height: 2.4;
+}
+
+/* ── TOAST ─── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 8px 18px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition: transform 0.22s ease;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .toast, .btn-plus, .btn-save, .btn-cancel, .btn-share, .cchip { transition: none; }
+}
+</style>
+
+<div class="app">
+
+  <!-- STICKY HEADER -->
+  <header class="header">
+    <span class="header-title">모임<span>정산</span></span>
+    <span class="header-badge">SETTLEMENT</span>
+    <div class="header-total">
+      <div class="total-num" id="hdrTotal">₩0</div>
+      <div class="total-per" id="hdrPer">— / person</div>
+    </div>
+    <button class="btn-reset" id="btnReset">초기화</button>
+  </header>
+
+  <!-- SECTION 1: PARTICIPANTS -->
+  <div class="sec-hdr">
+    <span class="sec-label">참여자</span>
+    <span class="sec-count" id="cntP">0명</span>
+  </div>
+  <div class="input-row">
+    <input class="field" type="text" id="inName" placeholder="이름 입력" maxlength="6"
+           autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="btn-plus" id="btnAddP" aria-label="추가">+</button>
+  </div>
+  <div class="chips-wrap" id="chipsList">
+    <div class="empty" id="emptyP" style="padding:4px 0 12px;text-align:left">2명 이상 추가하세요</div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <!-- SECTION 2: EXPENSES -->
+  <div class="sec-hdr">
+    <span class="sec-label">지출내역</span>
+    <span class="sec-count" id="cntE">0건</span>
+    <button class="btn-add-exp" id="btnOpenForm" style="margin-left:8px">+ 추가</button>
+  </div>
+
+  <div class="exp-form" id="expForm">
+    <div class="form-row">
+      <span class="form-lbl">항목</span>
+      <input class="field" type="text" id="inDesc" placeholder="예: 저녁 식사" maxlength="20" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <span class="form-lbl">금액</span>
+      <input class="field mono" type="tel" id="inAmt" placeholder="0" inputmode="numeric">
+    </div>
+    <div class="form-row">
+      <span class="form-lbl">계산자</span>
+      <select class="fselect" id="inPayer"></select>
+    </div>
+    <div class="form-row" style="align-items:flex-start">
+      <span class="form-lbl">참여자</span>
+      <div class="check-chips" id="inParts"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" id="btnCancelExp">취소</button>
+      <button class="btn-save" id="btnSaveExp">저장</button>
+    </div>
+  </div>
+
+  <div class="exp-list" id="expList">
+    <div class="empty" id="emptyE">지출을 추가하면 여기에 표시됩니다</div>
+  </div>
+
+  <div class="sec-divider"></div>
+
+  <!-- SECTION 3: SETTLEMENT (live) -->
+  <div id="settleSection">
+    <div class="sec-hdr">
+      <span class="sec-label">정산결과</span>
+    </div>
+    <div id="settleContent">
+      <div class="empty">참여자와 지출을 추가하면<br>정산 결과가 실시간으로 표시됩니다</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const S = { people: [], expenses: [] };
+let expSeq = 0;
+let formChecked = new Set();
+
+function won(n) { return '₩' + Math.round(n).toLocaleString('ko-KR'); }
+function initial(s) { return s.charAt(0).toUpperCase(); }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── UPDATE (call after every state change) ───────────────────
+function update(scrollToSettle) {
+  const total = S.expenses.reduce((s, e) => s + e.amount, 0);
+  const n = S.people.length;
+
+  $('hdrTotal').textContent = won(total);
+  $('hdrPer').textContent = n > 0 ? won(total / n) + ' / person' : '— / person';
+  $('cntP').textContent = n + '명';
+  $('cntE').textContent = S.expenses.length + '건';
+
+  renderPeople();
+  renderExpenses();
+  renderSettle();
+
+  if (scrollToSettle && S.people.length >= 2 && S.expenses.length > 0) {
+    setTimeout(() => $('settleSection').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+}
+
+// ── PARTICIPANTS ─────────────────────────────────────────────
+function renderPeople() {
+  const wrap = $('chipsList');
+  wrap.querySelectorAll('.chip').forEach(c => c.remove());
+
+  $('emptyP').style.display = S.people.length === 0 ? '' : 'none';
+
+  S.people.forEach((name, i) => {
+    const div = document.createElement('div');
+    div.className = 'chip';
+    div.innerHTML =
+      '<div class="chip-av">' + initial(name) + '</div>' +
+      '<span class="chip-name">' + esc(name) + '</span>' +
+      '<button class="chip-x" data-i="' + i + '" aria-label="' + esc(name) + ' 제거">×</button>';
+    wrap.appendChild(div);
+  });
+
+  wrap.querySelectorAll('.chip-x').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const removed = S.people[+btn.dataset.i];
+      S.people.splice(+btn.dataset.i, 1);
+      S.expenses.forEach(e => {
+        e.members = e.members.filter(m => m !== removed);
+        if (e.payer === removed) e.payer = S.people[0] || '';
+      });
+      S.expenses = S.expenses.filter(e => e.members.length > 0 && e.payer);
+      update();
+    });
+  });
+}
+
+function addPerson() {
+  const inp = $('inName');
+  const name = inp.value.trim();
+  if (!name) { inp.focus(); return; }
+  if (S.people.includes(name)) { toast('이미 있는 이름입니다'); inp.select(); return; }
+  S.people.push(name);
+  inp.value = '';
+  update();
+  inp.focus();
+}
+
+$('btnAddP').addEventListener('click', addPerson);
+$('inName').addEventListener('keydown', e => { if (e.key === 'Enter') addPerson(); });
+
+// ── EXPENSES ─────────────────────────────────────────────────
+function renderExpenses() {
+  const list = $('expList');
+  list.querySelectorAll('.exp-card').forEach(c => c.remove());
+  $('emptyE').style.display = S.expenses.length === 0 ? '' : 'none';
+
+  S.expenses.forEach((exp, i) => {
+    const div = document.createElement('div');
+    div.className = 'exp-card';
+    div.innerHTML =
+      '<div class="exp-card-top">' +
+        '<span class="exp-desc">' + esc(exp.desc) + '</span>' +
+        '<span class="exp-amt">' + won(exp.amount) + '</span>' +
+        '<button class="btn-del" data-i="' + i + '" aria-label="삭제">×</button>' +
+      '</div>' +
+      '<div class="exp-card-bot">' +
+        '<span class="lbl-tiny">결제</span>' +
+        '<span class="tag-payer">' + esc(exp.payer) + '</span>' +
+        '<span class="dot"> · </span>' +
+        '<span class="tag-members">' + exp.members.map(esc).join(' · ') + '</span>' +
+      '</div>';
+    list.appendChild(div);
+  });
+
+  list.querySelectorAll('.btn-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      S.expenses.splice(+btn.dataset.i, 1);
+      update();
+    });
+  });
+}
+
+// expense form
+function openExpForm() {
+  if (S.people.length < 2) { toast('참여자를 2명 이상 추가하세요'); return; }
+
+  const sel = $('inPayer');
+  sel.innerHTML = '';
+  S.people.forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    sel.appendChild(o);
+  });
+
+  formChecked = new Set(S.people);
+  const box = $('inParts');
+  box.innerHTML = '';
+  S.people.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'cchip on';
+    chip.textContent = p;
+    chip.addEventListener('click', () => {
+      if (formChecked.has(p)) { formChecked.delete(p); chip.classList.remove('on'); }
+      else { formChecked.add(p); chip.classList.add('on'); }
+    });
+    box.appendChild(chip);
+  });
+
+  $('expForm').classList.add('open');
+  $('btnOpenForm').style.display = 'none';
+  setTimeout(() => $('inDesc').focus(), 50);
+}
+
+function closeExpForm() {
+  $('expForm').classList.remove('open');
+  $('btnOpenForm').style.display = '';
+  $('inDesc').value = '';
+  $('inAmt').value = '';
+}
+
+$('btnOpenForm').addEventListener('click', openExpForm);
+$('btnCancelExp').addEventListener('click', closeExpForm);
+
+$('inAmt').addEventListener('input', function () {
+  const raw = this.value.replace(/[^0-9]/g, '');
+  this.value = raw ? parseInt(raw, 10).toLocaleString('ko-KR') : '';
+});
+
+$('btnSaveExp').addEventListener('click', () => {
+  const desc = $('inDesc').value.trim();
+  const raw = $('inAmt').value.replace(/[^0-9]/g, '');
+  const amount = parseInt(raw, 10);
+  const payer = $('inPayer').value;
+  const members = [...formChecked];
+
+  if (!desc) { toast('항목명을 입력하세요'); $('inDesc').focus(); return; }
+  if (!raw || amount <= 0) { toast('금액을 입력하세요'); $('inAmt').focus(); return; }
+  if (members.length === 0) { toast('참여자를 1명 이상 선택하세요'); return; }
+
+  S.expenses.push({ id: ++expSeq, desc, amount, payer, members });
+  closeExpForm();
+  update(true); // scroll to settlement after saving
+});
+
+// ── SETTLEMENT ───────────────────────────────────────────────
+function calcSettle() {
+  const bal = {};
+  S.people.forEach(p => { bal[p] = 0; });
+  S.expenses.forEach(({ amount, payer, members }) => {
+    bal[payer] += amount;
+    const share = amount / members.length;
+    members.forEach(p => { bal[p] -= share; });
+  });
+
+  const creds = [], debts = [];
+  Object.entries(bal).forEach(([p, v]) => {
+    if (v > 0.5) creds.push({ p, v });
+    else if (v < -0.5) debts.push({ p, v: -v });
+  });
+  creds.sort((a, b) => b.v - a.v);
+  debts.sort((a, b) => b.v - a.v);
+
+  const txs = [];
+  let i = 0, j = 0;
+  while (i < creds.length && j < debts.length) {
+    const send = Math.min(creds[i].v, debts[j].v);
+    if (send > 0.5) txs.push({ from: debts[j].p, to: creds[i].p, amt: Math.round(send) });
+    creds[i].v -= send; debts[j].v -= send;
+    if (creds[i].v < 0.5) i++;
+    if (debts[j].v < 0.5) j++;
+  }
+  return { bal, txs };
+}
+
+function renderSettle() {
+  const box = $('settleContent');
+
+  if (S.people.length < 2 || S.expenses.length === 0) {
+    box.innerHTML = '<div class="empty">참여자와 지출을 추가하면<br>정산 결과가 실시간으로 표시됩니다</div>';
+    return;
+  }
+
+  const total = S.expenses.reduce((s, e) => s + e.amount, 0);
+  const n = S.people.length;
+  const { bal, txs } = calcSettle();
+
+  let h = '<div class="settle-summary">' +
+    '<div class="sum-cell"><div class="sum-val">' + won(total) + '</div><div class="sum-key">TOTAL</div></div>' +
+    '<div class="sum-cell"><div class="sum-val plain">' + n + '명</div><div class="sum-key">MEMBERS</div></div>' +
+    '<div class="sum-cell"><div class="sum-val">' + won(total / n) + '</div><div class="sum-key">PER PERSON</div></div>' +
+    '</div>';
+
+  h += '<div class="balance-box">' +
+    '<div class="bal-head">' +
+      '<span class="bh-name">참여자</span>' +
+      '<span class="bh-paid">결제액</span>' +
+      '<span class="bh-net">잔액</span>' +
+    '</div>';
+
+  S.people.forEach(p => {
+    const paid = S.expenses.filter(e => e.payer === p).reduce((s, e) => s + e.amount, 0);
+    const net = bal[p] || 0;
+    const cls = net > 0.5 ? 'pos' : net < -0.5 ? 'neg' : 'zero';
+    const sign = net > 0.5 ? '+' : net < -0.5 ? '−' : '';
+    h += '<div class="bal-row">' +
+      '<span class="bal-name">' + esc(p) + '</span>' +
+      '<span class="bal-paid">' + won(paid) + '</span>' +
+      '<span class="bal-net ' + cls + '">' + sign + won(Math.abs(net)) + '</span>' +
+    '</div>';
+  });
+
+  h += '</div>';
+
+  h += '<div class="tx-block">' +
+    '<div class="tx-hdr">' +
+      '<span class="tx-hdr-lbl">SETTLEMENT — ' + txs.length + '건</span>' +
+      (txs.length > 0 ? '<button class="btn-share" id="btnShare">공유</button>' : '') +
+    '</div>';
+
+  if (txs.length === 0) {
+    h += '<div class="settled-ok">모든 금액이 정산되었습니다<br>추가 송금 없음 ✓</div>';
+  } else {
+    txs.forEach(tx => {
+      h += '<div class="tx-item">' +
+        '<span class="tx-from">' + esc(tx.from) + '</span>' +
+        '<span class="tx-arrow">→</span>' +
+        '<span class="tx-to">' + esc(tx.to) + '</span>' +
+        '<span class="tx-amt">' + won(tx.amt) + '</span>' +
+      '</div>';
+    });
+  }
+
+  h += '</div>';
+  box.innerHTML = h;
+
+  const shareBtn = $('btnShare');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      const lines = ['[모임 정산]', '총 지출: ' + won(total), ''];
+      txs.forEach(tx => lines.push(tx.from + ' → ' + tx.to + '  ' + won(tx.amt)));
+      const text = lines.join('\n');
+      if (navigator.share) {
+        navigator.share({ text }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => toast('클립보드에 복사되었습니다'));
+      } else {
+        toast('공유를 지원하지 않는 환경입니다');
+      }
+    });
+  }
+}
+
+// ── RESET ────────────────────────────────────────────────────
+$('btnReset').addEventListener('click', () => {
+  if (!confirm('모든 데이터를 초기화할까요?')) return;
+  S.people = [];
+  S.expenses = [];
+  closeExpForm();
+  update();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+update();
+</script>
