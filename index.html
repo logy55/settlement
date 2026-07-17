@@ -1,30 +1,38 @@
+
 <title>야볼 정산 계산기</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#FFFFFF">
 <style>
 :root {
-  --ground:     #0E1118;
-  --surface:    #161B27;
-  --surface-2:  #1D2337;
-  --border:     #27304A;
-  --text:       #CDD5E0;
-  --text-dim:   #5E6E8A;
-  --text-label: #8A97B0;
-  --green:      #3DB87A;
-  --green-soft: rgba(61,184,122,0.10);
-  --red:        #D94F4F;
-  --red-soft:   rgba(217,79,79,0.10);
-  --blue:       #7B9EE8;
-  --blue-soft:  rgba(123,158,232,0.10);
+  --bg:         #FFFFFF;
+  --surface:    #FFFFFF;
+  --surface-2:  #F4F5F7;
+  --border:     #E4E7EC;
+  --text:       #23262F;
+  --text-dim:   #9AA1AE;
+  --text-label: #6B7280;
+  --orange:      #F0883E;
+  --orange-soft: rgba(240,136,62,0.12);
+  --orange-bord: rgba(240,136,62,0.35);
+  --blue:        #3E6FEA;
+  --blue-soft:   rgba(62,111,234,0.10);
+  --blue-bord:   rgba(62,111,234,0.30);
+  --green:       #1F9D63;
+  --green-soft:  rgba(31,157,99,0.10);
+  --green-bord:  rgba(31,157,99,0.28);
+  --red:         #E1514F;
+  --red-soft:    rgba(225,81,79,0.08);
+  --red-bord:    rgba(225,81,79,0.28);
   --mono: 'SF Mono','Cascadia Code','Fira Code',Consolas,'Courier New',monospace;
   --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { background: var(--ground); }
+html { background: var(--bg); }
 
 body {
-  background: var(--ground);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   font-size: 14px;
@@ -50,6 +58,7 @@ body {
   border-bottom: 1px solid var(--border);
   padding: 12px 16px;
   background: var(--surface);
+  box-shadow: 0 1px 3px rgba(20,20,30,0.04);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -63,7 +72,7 @@ body {
   color: var(--text);
   flex-shrink: 0;
 }
-.header-title span { color: var(--green); }
+.header-title span { color: var(--orange); }
 
 .header-badge {
   font-family: var(--mono);
@@ -75,29 +84,8 @@ body {
   flex-shrink: 0;
 }
 
-.header-total {
-  margin-left: auto;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.total-num {
-  font-family: var(--mono);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--green);
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.total-per {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
 .btn-reset {
+  margin-left: auto;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--text-dim);
@@ -115,9 +103,8 @@ body {
 
 /* ── SECTION DIVIDER ─── */
 .sec-divider {
-  height: 6px;
-  background: var(--border);
-  opacity: 0.4;
+  height: 8px;
+  background: var(--surface-2);
 }
 
 /* ── SECTION HEADER ─── */
@@ -194,7 +181,7 @@ body {
   min-height: 44px;
   -webkit-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235E6E8A'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239AA1AE'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   cursor: pointer;
@@ -202,8 +189,8 @@ body {
 .fselect:focus { border-color: var(--blue); }
 
 .btn-plus {
-  background: var(--blue);
-  color: #0E1118;
+  background: var(--orange);
+  color: #FFFFFF;
   border: none;
   font-family: var(--mono);
   font-size: 20px;
@@ -220,7 +207,7 @@ body {
   justify-content: center;
   flex-shrink: 0;
 }
-.btn-plus:active { opacity: 0.75; }
+.btn-plus:active { opacity: 0.8; }
 
 /* ── CHIPS ─── */
 .chips-wrap {
@@ -246,7 +233,7 @@ body {
   height: 22px;
   border-radius: 50%;
   background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.35);
+  border: 1px solid var(--blue-bord);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -278,8 +265,8 @@ body {
 
 /* ── EXPENSE FORM ─── */
 .exp-form {
-  background: var(--surface);
-  border-top: 2px solid var(--blue);
+  background: var(--surface-2);
+  border-top: 2px solid var(--orange);
   border-bottom: 1px solid var(--border);
   padding: 14px 16px;
   display: none;
@@ -316,7 +303,7 @@ body {
   padding: 5px 12px;
   border: 1px solid var(--border);
   border-radius: 3px;
-  background: var(--surface-2);
+  background: var(--surface);
   cursor: pointer;
   font-size: 12px;
   color: var(--text-label);
@@ -328,7 +315,7 @@ body {
   display: flex;
   align-items: center;
 }
-.cchip.on { background: var(--blue-soft); border-color: rgba(123,158,232,0.4); color: var(--blue); }
+.cchip.on { background: var(--blue-soft); border-color: var(--blue-bord); color: var(--blue); }
 
 .form-actions {
   display: flex;
@@ -338,8 +325,8 @@ body {
 
 .btn-save {
   flex: 1;
-  background: var(--green);
-  color: #0E1118;
+  background: var(--orange);
+  color: #FFFFFF;
   border: none;
   font-family: var(--mono);
   font-size: 12px;
@@ -352,7 +339,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   transition: opacity 0.12s;
 }
-.btn-save:active { opacity: 0.8; }
+.btn-save:active { opacity: 0.85; }
 
 .btn-cancel {
   background: transparent;
@@ -376,9 +363,9 @@ body {
   gap: 5px;
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--blue);
-  background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.3);
+  color: var(--orange);
+  background: var(--orange-soft);
+  border: 1px solid var(--orange-bord);
   padding: 5px 13px;
   border-radius: 3px;
   cursor: pointer;
@@ -407,20 +394,46 @@ body {
 .exp-card-top {
   display: flex;
   align-items: center;
-  padding: 11px 14px;
+  padding: 10px 14px;
+  gap: 8px;
+  background: var(--blue-soft);
   border-bottom: 1px solid var(--border);
-  gap: 10px;
 }
 
-.exp-desc { flex: 1; font-size: 13px; color: var(--text); font-weight: 500; }
+.exp-seq-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.exp-desc { flex: 1; font-size: 14px; color: var(--blue); font-weight: 700; }
 
 .exp-amt {
   font-family: var(--mono);
   font-size: 15px;
   font-weight: 700;
-  color: var(--green);
+  color: var(--text);
   white-space: nowrap;
 }
+
+.btn-edit {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -4px 0 -4px 4px;
+  border-radius: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-edit:active { color: var(--blue); background: var(--blue-soft); }
 
 .btn-del {
   background: none;
@@ -433,7 +446,7 @@ body {
   justify-content: center;
   min-width: 32px;
   min-height: 32px;
-  margin: -4px -6px -4px 4px;
+  margin: -4px -6px -4px 0;
   border-radius: 3px;
   -webkit-tap-highlight-color: transparent;
 }
@@ -441,10 +454,21 @@ body {
 
 .exp-card-bot {
   display: flex;
+  flex-direction: column;
+  background: var(--surface-2);
+}
+
+.bot-row {
+  display: flex;
   align-items: center;
-  padding: 8px 14px;
   gap: 8px;
   flex-wrap: wrap;
+  padding: 8px 14px;
+}
+
+.bot-row-members {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
 }
 
 .lbl-tiny {
@@ -459,52 +483,41 @@ body {
   font-size: 11px;
   color: var(--blue);
   background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.25);
+  border: 1px solid var(--blue-bord);
   padding: 2px 8px;
   border-radius: 2px;
   font-family: var(--mono);
 }
 
-.dot { color: var(--border); }
-
 .tag-members { font-size: 11px; color: var(--text-label); font-family: var(--mono); }
+
+/* ── EXPENSE TOTAL ─── */
+.exp-total {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 22px;
+  margin-top: -4px;
+}
+
+.exp-total-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.exp-total-val {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: -0.02em;
+}
 
 /* ── SETTLEMENT ─── */
 #settleSection { padding-bottom: 40px; }
-
-.settle-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 14px;
-}
-
-.sum-cell {
-  background: var(--surface);
-  padding: 13px 8px;
-  text-align: center;
-}
-
-.sum-val {
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--green);
-  line-height: 1.1;
-}
-.sum-val.plain { color: var(--text); }
-
-.sum-key {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  margin-top: 4px;
-}
 
 /* balance table */
 .balance-box {
@@ -518,7 +531,7 @@ body {
   display: flex;
   padding: 7px 14px;
   border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--surface-2);
 }
 
 .bal-head span {
@@ -537,7 +550,8 @@ body {
   display: flex;
   align-items: center;
   padding: 10px 14px;
-  border-bottom: 1px solid rgba(39,48,74,0.5);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 .bal-row:last-child { border-bottom: none; }
 
@@ -562,7 +576,7 @@ body {
 .bal-net.neg { color: var(--red); }
 .bal-net.zero { color: var(--text-dim); }
 
-/* transactions */
+/* transactions (grouped by recipient) */
 .tx-block { padding: 0 16px; }
 
 .tx-hdr {
@@ -583,64 +597,74 @@ body {
   flex: 1;
 }
 
-.btn-share {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--blue);
-  background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.3);
-  padding: 4px 12px;
-  border-radius: 2px;
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  min-height: 28px;
-  -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.12s;
-}
-.btn-share:active { opacity: 0.7; }
-
-.tx-item {
-  display: flex;
-  align-items: center;
-  padding: 11px 14px;
+.tx-group {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 4px;
-  margin-bottom: 7px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.tx-group-head {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  padding: 10px 14px;
+  background: var(--blue-soft);
+  border-bottom: 1px solid var(--border);
 }
 
-.tx-from {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--red-soft);
-  border: 1px solid rgba(217,79,79,0.25);
-  padding: 4px 10px;
-  border-radius: 3px;
+.tx-group-to-lbl {
   font-family: var(--mono);
-  white-space: nowrap;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
-.tx-arrow { font-family: var(--mono); font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
-
-.tx-to {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--green-soft);
-  border: 1px solid rgba(61,184,122,0.25);
-  padding: 4px 10px;
-  border-radius: 3px;
-  font-family: var(--mono);
-  white-space: nowrap;
-}
-
-.tx-amt {
-  font-family: var(--mono);
-  font-size: 15px;
+.tx-group-to {
+  font-size: 14px;
   font-weight: 700;
+  color: var(--blue);
+  flex: 1;
+}
+
+.tx-group-total {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.tx-group-body { padding: 2px 14px; }
+
+.tx-sender-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.tx-sender-row:last-child { border-bottom: none; }
+
+.tx-sender-name {
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 3px 9px;
+  border-radius: 3px;
+  font-family: var(--mono);
+}
+
+.tx-sender-amt {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
   margin-left: auto;
   white-space: nowrap;
 }
@@ -655,136 +679,31 @@ body {
   line-height: 2.4;
 }
 
-/* ── NOTICE (accounts) ─── */
-.notice-section { padding-bottom: 48px; }
-
-.acct-list {
-  padding: 0 16px;
+/* ── BOTTOM ACTIONS ─── */
+.bottom-actions {
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  margin-bottom: 8px;
+  padding: 16px 16px 36px;
 }
 
-.acct-empty {
-  padding: 20px 0;
-  text-align: center;
+.btn-copy-result {
+  flex: 1;
   font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 0.04em;
-  line-height: 2;
-}
-
-.acct-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.acct-inner {
-  display: flex;
-  align-items: flex-start;
-  padding: 13px 14px;
-  gap: 10px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  transition: background 0.12s;
-}
-.acct-inner:active { background: var(--surface-2); }
-
-.acct-info { flex: 1; min-width: 0; }
-
-.acct-meta {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 5px;
-  flex-wrap: wrap;
-}
-
-.acct-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.acct-bank {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--blue);
-  background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.25);
-  padding: 1px 7px;
-  border-radius: 2px;
-}
-
-.acct-num {
-  font-family: var(--mono);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.02em;
-  word-break: break-all;
-}
-
-.acct-hint {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--green);
-  letter-spacing: 0.06em;
-  margin-top: 4px;
-}
-
-.acct-del {
-  background: none;
-  border: none;
-  color: var(--text-dim);
+  padding: 13px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 17px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
-  margin: -3px -4px 0 0;
-  border-radius: 3px;
-  flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-.acct-del:active { color: var(--red); background: var(--red-soft); }
-
-/* add form */
-.acct-form {
-  background: var(--surface);
-  border-top: 2px solid var(--blue);
-  border-bottom: 1px solid var(--border);
-  padding: 14px 16px;
-  display: none;
-  margin-bottom: 8px;
-}
-.acct-form.open { display: block; }
-
-.btn-add-acct {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--blue);
-  background: var(--blue-soft);
-  border: 1px solid rgba(123,158,232,0.3);
-  padding: 5px 13px;
-  border-radius: 3px;
-  cursor: pointer;
+  letter-spacing: 0.03em;
+  min-height: 46px;
   -webkit-tap-highlight-color: transparent;
   transition: opacity 0.12s;
-  min-height: 30px;
-  letter-spacing: 0.04em;
+  background: var(--blue-soft);
+  color: var(--blue);
+  border: 1px solid var(--blue-bord);
 }
-.btn-add-acct:active { opacity: 0.7; }
+
+.btn-copy-result:active { opacity: 0.75; }
 
 /* ── TOAST ─── */
 .toast {
@@ -792,9 +711,9 @@ body {
   bottom: 28px;
   left: 50%;
   transform: translateX(-50%) translateY(80px);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  color: var(--text);
+  background: var(--text);
+  border: 1px solid var(--text);
+  color: #FFFFFF;
   font-family: var(--mono);
   font-size: 11px;
   padding: 8px 18px;
@@ -804,11 +723,12 @@ body {
   transition: transform 0.22s ease;
   z-index: 100;
   pointer-events: none;
+  box-shadow: 0 4px 14px rgba(20,20,30,0.18);
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast, .btn-plus, .btn-save, .btn-cancel, .btn-share, .cchip { transition: none; }
+  .toast, .btn-plus, .btn-save, .btn-cancel, .btn-copy-result, .cchip { transition: none; }
 }
 </style>
 
@@ -817,10 +737,6 @@ body {
   <!-- STICKY HEADER -->
   <header class="header">
     <span class="header-title">야볼 <span>정산 계산기</span></span>
-    <div class="header-total">
-      <div class="total-num" id="hdrTotal">₩0</div>
-      <div class="total-per" id="hdrPer">— / person</div>
-    </div>
     <button class="btn-reset" id="btnReset">초기화</button>
   </header>
 
@@ -849,6 +765,16 @@ body {
 
   <div class="exp-form" id="expForm">
     <div class="form-row">
+      <span class="form-lbl">차수</span>
+      <select class="fselect" id="inRound">
+        <option value="1">1차</option>
+        <option value="2">2차</option>
+        <option value="3">3차</option>
+        <option value="4">4차</option>
+        <option value="5">5차</option>
+      </select>
+    </div>
+    <div class="form-row">
       <span class="form-lbl">항목</span>
       <input class="field" type="text" id="inDesc" placeholder="예: 저녁 식사" maxlength="20" autocomplete="off">
     </div>
@@ -873,6 +799,10 @@ body {
   <div class="exp-list" id="expList">
     <div class="empty" id="emptyE">지출을 추가하면 여기에 표시됩니다</div>
   </div>
+  <div class="exp-total" id="expTotal">
+    <span class="exp-total-lbl">총 지출</span>
+    <span class="exp-total-val" id="expTotalVal">₩0</span>
+  </div>
 
   <div class="sec-divider"></div>
 
@@ -888,62 +818,8 @@ body {
 
   <div class="sec-divider"></div>
 
-  <!-- SECTION 4: NOTICE / ACCOUNT -->
-  <div class="notice-section">
-    <div class="sec-hdr">
-      <span class="sec-label">송금 안내</span>
-      <button class="btn-add-acct" id="btnOpenAcctForm">+ 추가</button>
-    </div>
-
-    <!-- add form (inline) -->
-    <div class="acct-form" id="acctForm">
-      <div class="form-row">
-        <span class="form-lbl">이름</span>
-        <input class="field" type="text" id="inAcctName" placeholder="예: 홍길동" maxlength="10" autocomplete="off" autocorrect="off">
-      </div>
-      <div class="form-row">
-        <span class="form-lbl">은행</span>
-        <select class="fselect" id="inAcctBank">
-          <option value="">은행 선택</option>
-          <option>국민은행</option>
-          <option>신한은행</option>
-          <option>우리은행</option>
-          <option>하나은행</option>
-          <option>농협은행</option>
-          <option>기업은행</option>
-          <option>카카오뱅크</option>
-          <option>토스뱅크</option>
-          <option>케이뱅크</option>
-          <option>새마을금고</option>
-          <option>신협</option>
-          <option>우체국</option>
-          <option>수협은행</option>
-          <option>SC제일은행</option>
-          <option>씨티은행</option>
-          <option>산업은행</option>
-          <option>부산은행</option>
-          <option>경남은행</option>
-          <option>광주은행</option>
-          <option>전북은행</option>
-          <option>제주은행</option>
-          <option>대구은행</option>
-          <option>저축은행</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <span class="form-lbl">계좌</span>
-        <input class="field mono" type="tel" id="inAcctNum" placeholder="계좌번호 입력" inputmode="numeric" autocomplete="off">
-      </div>
-      <div class="form-actions">
-        <button class="btn-cancel" id="btnCancelAcct">취소</button>
-        <button class="btn-save" id="btnSaveAcct">저장</button>
-      </div>
-    </div>
-
-    <!-- account list -->
-    <div class="acct-list" id="acctList">
-      <div class="acct-empty" id="acctEmpty">계좌를 추가하면 탭하여 바로 복사할 수 있습니다</div>
-    </div>
+  <div class="bottom-actions">
+    <button class="btn-copy-result" id="btnCopyResult">결과 복사하기</button>
   </div>
 
 </div>
@@ -954,8 +830,8 @@ body {
 const $ = id => document.getElementById(id);
 
 const S = { people: [], expenses: [] };
-let expSeq = 0;
 let formChecked = new Set();
+let editingIndex = null;
 
 function won(n) { return '₩' + Math.round(n).toLocaleString('ko-KR'); }
 function initial(s) { return s.charAt(0).toUpperCase(); }
@@ -978,10 +854,10 @@ function update(scrollToSettle) {
   const total = S.expenses.reduce((s, e) => s + e.amount, 0);
   const n = S.people.length;
 
-  $('hdrTotal').textContent = won(total);
-  $('hdrPer').textContent = n > 0 ? won(total / n) + ' / person' : '— / person';
   $('cntP').textContent = n + '명';
   $('cntE').textContent = S.expenses.length + '건';
+  $('expTotalVal').textContent = won(total);
+  $('expTotal').style.display = S.expenses.length > 0 ? 'flex' : 'none';
 
   renderPeople();
   renderExpenses();
@@ -1048,30 +924,41 @@ function renderExpenses() {
     div.className = 'exp-card';
     div.innerHTML =
       '<div class="exp-card-top">' +
+        '<span class="exp-seq-lbl">' + exp.round + '차</span>' +
         '<span class="exp-desc">' + esc(exp.desc) + '</span>' +
         '<span class="exp-amt">' + won(exp.amount) + '</span>' +
+        '<button class="btn-edit" data-i="' + i + '" aria-label="수정">✎</button>' +
         '<button class="btn-del" data-i="' + i + '" aria-label="삭제">×</button>' +
       '</div>' +
       '<div class="exp-card-bot">' +
-        '<span class="lbl-tiny">결제</span>' +
-        '<span class="tag-payer">' + esc(exp.payer) + '</span>' +
-        '<span class="dot"> · </span>' +
-        '<span class="tag-members">' + exp.members.map(esc).join(' · ') + '</span>' +
+        '<div class="bot-row"><span class="lbl-tiny">결제</span><span class="tag-payer">' + esc(exp.payer) + '</span></div>' +
+        '<div class="bot-row bot-row-members"><span class="lbl-tiny">참여</span><span class="tag-members">' + exp.members.map(esc).join(' · ') + '</span></div>' +
       '</div>';
     list.appendChild(div);
   });
 
+  list.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openExpForm(+btn.dataset.i);
+    });
+  });
+
   list.querySelectorAll('.btn-del').forEach(btn => {
     btn.addEventListener('click', () => {
-      S.expenses.splice(+btn.dataset.i, 1);
+      const i = +btn.dataset.i;
+      if (editingIndex === i) closeExpForm();
+      S.expenses.splice(i, 1);
       update();
     });
   });
 }
 
-// expense form
-function openExpForm() {
+// expense form (editIndex omitted → new entry, provided → edit existing)
+function openExpForm(editIndex) {
   if (S.people.length < 2) { toast('참여자를 2명 이상 추가하세요'); return; }
+
+  editingIndex = (typeof editIndex === 'number') ? editIndex : null;
+  const exp = editingIndex !== null ? S.expenses[editingIndex] : null;
 
   const sel = $('inPayer');
   sel.innerHTML = '';
@@ -1080,13 +967,14 @@ function openExpForm() {
     o.value = p; o.textContent = p;
     sel.appendChild(o);
   });
+  if (exp) sel.value = exp.payer;
 
-  formChecked = new Set(S.people);
+  formChecked = new Set(exp ? exp.members : S.people);
   const box = $('inParts');
   box.innerHTML = '';
   S.people.forEach(p => {
     const chip = document.createElement('div');
-    chip.className = 'cchip on';
+    chip.className = 'cchip' + (formChecked.has(p) ? ' on' : '');
     chip.textContent = p;
     chip.addEventListener('click', () => {
       if (formChecked.has(p)) { formChecked.delete(p); chip.classList.remove('on'); }
@@ -1094,6 +982,11 @@ function openExpForm() {
     });
     box.appendChild(chip);
   });
+
+  $('inRound').value = exp ? exp.round : 1;
+  $('inDesc').value = exp ? exp.desc : '';
+  $('inAmt').value = exp ? exp.amount.toLocaleString('ko-KR') : '';
+  $('btnSaveExp').textContent = exp ? '수정' : '저장';
 
   $('expForm').classList.add('open');
   $('btnOpenForm').style.display = 'none';
@@ -1105,9 +998,11 @@ function closeExpForm() {
   $('btnOpenForm').style.display = '';
   $('inDesc').value = '';
   $('inAmt').value = '';
+  $('btnSaveExp').textContent = '저장';
+  editingIndex = null;
 }
 
-$('btnOpenForm').addEventListener('click', openExpForm);
+$('btnOpenForm').addEventListener('click', () => openExpForm());
 $('btnCancelExp').addEventListener('click', closeExpForm);
 
 $('inAmt').addEventListener('input', function () {
@@ -1116,6 +1011,7 @@ $('inAmt').addEventListener('input', function () {
 });
 
 $('btnSaveExp').addEventListener('click', () => {
+  const round = parseInt($('inRound').value, 10);
   const desc = $('inDesc').value.trim();
   const raw = $('inAmt').value.replace(/[^0-9]/g, '');
   const amount = parseInt(raw, 10);
@@ -1126,7 +1022,11 @@ $('btnSaveExp').addEventListener('click', () => {
   if (!raw || amount <= 0) { toast('금액을 입력하세요'); $('inAmt').focus(); return; }
   if (members.length === 0) { toast('참여자를 1명 이상 선택하세요'); return; }
 
-  S.expenses.push({ id: ++expSeq, desc, amount, payer, members });
+  if (editingIndex !== null) {
+    Object.assign(S.expenses[editingIndex], { round, desc, amount, payer, members });
+  } else {
+    S.expenses.push({ round, desc, amount, payer, members });
+  }
   closeExpForm();
   update(true); // scroll to settlement after saving
 });
@@ -1161,6 +1061,18 @@ function calcSettle() {
   return { bal, txs };
 }
 
+// group transactions by recipient so each receiver appears as a single bundled card
+function groupByRecipient(txs) {
+  const map = new Map();
+  txs.forEach(tx => {
+    if (!map.has(tx.to)) map.set(tx.to, { to: tx.to, total: 0, items: [] });
+    const g = map.get(tx.to);
+    g.total += tx.amt;
+    g.items.push(tx);
+  });
+  return [...map.values()];
+}
+
 function renderSettle() {
   const box = $('settleContent');
 
@@ -1169,17 +1081,10 @@ function renderSettle() {
     return;
   }
 
-  const total = S.expenses.reduce((s, e) => s + e.amount, 0);
-  const n = S.people.length;
   const { bal, txs } = calcSettle();
+  const groups = groupByRecipient(txs);
 
-  let h = '<div class="settle-summary">' +
-    '<div class="sum-cell"><div class="sum-val">' + won(total) + '</div><div class="sum-key">TOTAL</div></div>' +
-    '<div class="sum-cell"><div class="sum-val plain">' + n + '명</div><div class="sum-key">MEMBERS</div></div>' +
-    '<div class="sum-cell"><div class="sum-val">' + won(total / n) + '</div><div class="sum-key">PER PERSON</div></div>' +
-    '</div>';
-
-  h += '<div class="balance-box">' +
+  let h = '<div class="balance-box">' +
     '<div class="bal-head">' +
       '<span class="bh-name">참여자</span>' +
       '<span class="bh-paid">결제액</span>' +
@@ -1202,42 +1107,87 @@ function renderSettle() {
 
   h += '<div class="tx-block">' +
     '<div class="tx-hdr">' +
-      '<span class="tx-hdr-lbl">SETTLEMENT — ' + txs.length + '건</span>' +
-      (txs.length > 0 ? '<button class="btn-share" id="btnShare">공유</button>' : '') +
+      '<span class="tx-hdr-lbl">SETTLEMENT — ' + groups.length + '명에게</span>' +
     '</div>';
 
-  if (txs.length === 0) {
+  if (groups.length === 0) {
     h += '<div class="settled-ok">모든 금액이 정산되었습니다<br>추가 송금 없음 ✓</div>';
   } else {
-    txs.forEach(tx => {
-      h += '<div class="tx-item">' +
-        '<span class="tx-from">' + esc(tx.from) + '</span>' +
-        '<span class="tx-arrow">→</span>' +
-        '<span class="tx-to">' + esc(tx.to) + '</span>' +
-        '<span class="tx-amt">' + won(tx.amt) + '</span>' +
+    groups.forEach(g => {
+      h += '<div class="tx-group">' +
+        '<div class="tx-group-head">' +
+          '<span class="tx-group-to-lbl">TO</span>' +
+          '<span class="tx-group-to">' + esc(g.to) + '</span>' +
+          '<span class="tx-group-total">' + won(g.total) + '</span>' +
+        '</div>' +
+        '<div class="tx-group-body">' +
+        g.items.map(tx =>
+          '<div class="tx-sender-row">' +
+            '<span class="tx-sender-name">' + esc(tx.from) + '</span>' +
+            '<span class="tx-sender-amt">−' + won(tx.amt) + '</span>' +
+          '</div>'
+        ).join('') +
+        '</div>' +
       '</div>';
     });
   }
 
   h += '</div>';
   box.innerHTML = h;
+}
 
-  const shareBtn = $('btnShare');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', () => {
-      const lines = ['[모임 정산]', '총 지출: ' + won(total), ''];
-      txs.forEach(tx => lines.push(tx.from + ' → ' + tx.to + '  ' + won(tx.amt)));
-      const text = lines.join('\n');
-      if (navigator.share) {
-        navigator.share({ text }).catch(() => {});
-      } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => toast('클립보드에 복사되었습니다'));
-      } else {
-        toast('공유를 지원하지 않는 환경입니다');
-      }
+// ── SHARE / COPY (bottom bar) ─────────────────────────────────
+function buildResultText() {
+  if (S.people.length < 2 || S.expenses.length === 0) return null;
+  const total = S.expenses.reduce((s, e) => s + e.amount, 0);
+
+  const lines = ['[야볼 정산 결과]', ''];
+  lines.push('참여자: ' + S.people.join(', ') + ' (' + S.people.length + '명)');
+  lines.push('총 지출: ' + won(total));
+  lines.push('');
+  lines.push('── 지출 내역 ──');
+
+  S.expenses.forEach(exp => {
+    const share = exp.amount / exp.members.length;
+    const senders = exp.members.filter(m => m !== exp.payer);
+    lines.push('');
+    lines.push(exp.round + '차 · ' + exp.desc);
+    lines.push('결제자: ' + exp.payer);
+    lines.push('참여자: ' + exp.members.join(', ') + ' / 총 ' + won(exp.amount) + ' (1인 ' + won(share) + ')');
+    if (senders.length > 0) {
+      senders.forEach(m => lines.push('  ' + m + ' → ' + exp.payer + ' : ' + won(share)));
+    } else {
+      lines.push('  (본인 결제, 송금 없음)');
+    }
+  });
+
+  lines.push('');
+  lines.push('── 최종 정산 ──');
+
+  const { txs } = calcSettle();
+  const groups = groupByRecipient(txs);
+  if (groups.length === 0) {
+    lines.push('모든 금액이 정산되었습니다. 추가 송금 없음 ✓');
+  } else {
+    groups.forEach(g => {
+      lines.push('');
+      lines.push(g.to + '님이 받을 금액: ' + won(g.total));
+      g.items.forEach(tx => lines.push('  ' + tx.from + ' → ' + won(tx.amt)));
     });
   }
+
+  return lines.join('\n').trim();
 }
+
+$('btnCopyResult').addEventListener('click', () => {
+  const text = buildResultText();
+  if (!text) { toast('정산 결과가 없습니다'); return; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => toast('결과가 복사되었습니다'));
+  } else {
+    toast('복사를 지원하지 않는 환경입니다');
+  }
+});
 
 // ── RESET ────────────────────────────────────────────────────
 $('btnReset').addEventListener('click', () => {
@@ -1249,110 +1199,6 @@ $('btnReset').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// ── ACCOUNTS ─────────────────────────────────────────────────
-const LS_ACCTS = 'yabol_accounts';
-
-function loadAccounts() {
-  try { return JSON.parse(localStorage.getItem(LS_ACCTS) || '[]'); }
-  catch(e) { return []; }
-}
-
-function saveAccounts(arr) {
-  localStorage.setItem(LS_ACCTS, JSON.stringify(arr));
-}
-
-function copyText(text, label) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => toast(label + ' 복사됨'));
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); toast(label + ' 복사됨'); } catch(e) {}
-    document.body.removeChild(ta);
-  }
-}
-
-function renderAccounts() {
-  const list = $('acctList');
-  list.querySelectorAll('.acct-card').forEach(c => c.remove());
-  const accts = loadAccounts();
-  $('acctEmpty').style.display = accts.length === 0 ? '' : 'none';
-
-  accts.forEach((a, i) => {
-    const card = document.createElement('div');
-    card.className = 'acct-card';
-    card.innerHTML =
-      '<div class="acct-inner" data-i="' + i + '">' +
-        '<div class="acct-info">' +
-          '<div class="acct-meta">' +
-            '<span class="acct-name">' + esc(a.name) + '</span>' +
-            '<span class="acct-bank">' + esc(a.bank) + '</span>' +
-          '</div>' +
-          '<div class="acct-num">' + esc(a.num) + '</div>' +
-          '<div class="acct-hint">탭하면 복사됩니다</div>' +
-        '</div>' +
-        '<button class="acct-del" data-i="' + i + '" aria-label="삭제">×</button>' +
-      '</div>';
-    list.appendChild(card);
-  });
-
-  list.querySelectorAll('.acct-inner').forEach(el => {
-    el.addEventListener('click', e => {
-      if (e.target.classList.contains('acct-del')) return;
-      const a = loadAccounts()[+el.dataset.i];
-      if (a) copyText(a.num, a.bank + ' ' + a.num);
-    });
-  });
-
-  list.querySelectorAll('.acct-del').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const accts = loadAccounts();
-      accts.splice(+btn.dataset.i, 1);
-      saveAccounts(accts);
-      renderAccounts();
-    });
-  });
-}
-
-function openAcctForm() {
-  $('acctForm').classList.add('open');
-  $('btnOpenAcctForm').style.display = 'none';
-  $('inAcctName').value = '';
-  $('inAcctBank').value = '';
-  $('inAcctNum').value = '';
-  setTimeout(() => $('inAcctName').focus(), 50);
-}
-
-function closeAcctForm() {
-  $('acctForm').classList.remove('open');
-  $('btnOpenAcctForm').style.display = '';
-}
-
-$('btnOpenAcctForm').addEventListener('click', openAcctForm);
-$('btnCancelAcct').addEventListener('click', closeAcctForm);
-
-$('btnSaveAcct').addEventListener('click', () => {
-  const name = $('inAcctName').value.trim();
-  const bank = $('inAcctBank').value;
-  const num  = $('inAcctNum').value.trim();
-
-  if (!name) { toast('이름을 입력하세요'); $('inAcctName').focus(); return; }
-  if (!bank) { toast('은행을 선택하세요'); $('inAcctBank').focus(); return; }
-  if (!num)  { toast('계좌번호를 입력하세요'); $('inAcctNum').focus(); return; }
-
-  const accts = loadAccounts();
-  accts.push({ name, bank, num });
-  saveAccounts(accts);
-  renderAccounts();
-  closeAcctForm();
-  toast('계좌가 추가되었습니다');
-});
-
 // ── INIT ─────────────────────────────────────────────────────
 update();
-renderAccounts();
 </script>
